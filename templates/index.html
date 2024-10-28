@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Library Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('check_availability') }}">Check Book Availability</a>
+                        </li>
+                        {% if current_user.is_admin() %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('add_book') }}">Add Book</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('manage_books') }}">Manage Books</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('add_membership') }}">Add Membership</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('manage_memberships') }}">Manage Memberships</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('issue_book') }}">Issue Book</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('return_book') }}">Return Book</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content Section -->
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h1>Welcome to the Library Management System</h1>
+                <p class="lead">Manage books, memberships, transactions, and reports.</p>
+                {% if current_user.is_authenticated %}
+                    <p class="text-muted">Logged in as {{ current_user.username }} {% if current_user.is_admin() %}(Admin){% endif %}</p>
+                {% else %}
+                    <p>Please <a href="{{ url_for('login') }}">log in</a> to access the system.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Quick Links for Admin/User -->
+        {% if current_user.is_authenticated %}
+            <div class="row mt-4">
+                <!-- Admin Links -->
+                {% if current_user.is_admin() %}
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Admin Actions</h5>
+                                <ul class="list-unstyled">
+                                    <li><a href="{{ url_for('add_book') }}">Add Book</a></li>
+                                    <li><a href="{{ url_for('manage_books') }}">Manage Books</a></li>
+                                    <li><a href="{{ url_for('add_membership') }}">Add Membership</a></li>
+                                    <li><a href="{{ url_for('manage_memberships') }}">Manage Memberships</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- User Actions (Available to both Admin and Users) -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">User Actions</h5>
+                            <ul class="list-unstyled">
+                                <li><a href="{{ url_for('check_availability') }}">Check Book Availability</a></li>
+                                <li><a href="{{ url_for('issue_book') }}">Issue Book</a></li>
+                                <li><a href="{{ url_for('return_book') }}">Return Book</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report Links -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Reports</h5>
+                            <ul class="list-unstyled">
+                                <li><a href="{{ url_for('manage_memberships') }}">Active Issues</a></li>
+                                <li><a href="{{ url_for('manage_memberships') }}">Master List of Memberships</a></li>
+                                <li><a href="{{ url_for('manage_books') }}">Master List of Books</a></li>
+                                <li><a href="{{ url_for('manage_memberships') }}">Overdue Returns</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

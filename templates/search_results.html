@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Library Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2>Search Results</h2>
+
+    <!-- Navigation Links -->
+    <div class="mb-3">
+        <a href="{{ url_for('transactions') }}" class="btn btn-info">Transactions</a>
+        <a href="{{ url_for('index') }}" class="btn btn-info">Home</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger">Log Out</a>
+    </div>
+
+    <!-- Book Availability Section -->
+    <h4>Is Book Available?</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Book Name</th>
+                <th>Author Name</th>
+                <th>Serial Number</th>
+                <th>Available</th>
+                <th>Select to Issue the Book</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.serial_number }}</td>
+                <td>{{ 'Yes' if book.is_available else 'No' }}</td>
+                <td>
+                    {% if book.is_available %}
+                    <input type="radio" name="issue_book" value="{{ book.id }}">
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Book Return Section -->
+    <h4>Return Book?</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Author Name</th>
+                <th>Serial Number</th>
+                <th>Available</th>
+                <th>Select to Return the Book</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in current_user.transactions %}
+            <tr>
+                <td>{{ transaction.book.author }}</td>
+                <td>{{ transaction.book.serial_number }}</td>
+                <td>{{ 'Yes' if transaction.book.is_available else 'No' }}</td>
+                <td>
+                    <input type="radio" name="return_book" value="{{ transaction.id }}">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pay Fine Section -->
+    <h4>Pay Fine?</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Author Name</th>
+                <th>Fine Amount</th>
+                <th>Select to Pay Fine</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in current_user.transactions %}
+            {% if transaction.fine > 0 %}
+            <tr>
+                <td>{{ transaction.book.author }}</td>
+                <td>{{ transaction.fine }}</td>
+                <td>
+                    <input type="radio" name="pay_fine" value="{{ transaction.id }}">
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="d-grid mt-3">
+        <button class="btn btn-success" onclick="issueBook()">Issue Selected Book</button>
+        <button class="btn btn-warning" onclick="returnBook()">Return Selected Book</button>
+        <button class="btn btn-primary" onclick="payFine()">Pay Selected Fine</button>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Function to issue a book
+function issueBook() {
+    const bookName = document.getElementById('book-name').value;
+    const authorName = document.getElementById('author-name').value; // Automatically populated
+    const issueDate = document.getElementById('issue-date').value;
+    const returnDate = document.getElementById('return-date').value;
+    
+    // Simple validation
+    if (!bookName || !issueDate || !returnDate) {
+        showError("All fields are required to issue a book.");
+        return;
+    }
+    
+    // Here you would typically make a call to your backend to issue the book
+    console.log(`Issuing book: ${bookName}, Author: ${authorName}, Issue Date: ${issueDate}, Return Date: ${returnDate}`);
+    
+    // Provide feedback to user
+    alert(`Successfully issued "${bookName}" by ${authorName}. Please return by ${returnDate}.`);
+    
+    // Clear the form
+    document.getElementById('issue-form').reset();
+}
+
+// Function to return a book
+function returnBook() {
+    const bookName = document.getElementById('return-book-name').value;
+    const serialNo = document.getElementById('serial-number').value;
+    const issueDate = document.getElementById('issue-date-return').value; // Automatically populated
+    const returnDate = document.getElementById('return-date-return').value; // Can be edited
+
+    // Simple validation
+    if (!bookName || !serialNo || !issueDate) {
+        showError("Book Name, Serial Number, and Issue Date are required to return a book.");
+        return;
+    }
+
+    // Here you would typically make a call to your backend to return the book
+    console.log(`Returning book: ${bookName}, Serial No: ${serialNo}, Issue Date: ${issueDate}, Return Date: ${returnDate}`);
+    
+    // Provide feedback to user
+    alert(`Successfully returned "${bookName}". Thank you!`);
+    
+    // Clear the form
+    document.getElementById('return-form').reset();
+}
+
+// Function to pay a fine
+function payFine() {
+    const fineAmount = document.getElementById('fine-amount').value; // Assuming this is displayed
+    const finePaidCheckbox = document.getElementById('fine-paid-checkbox');
+
+    // Simple validation
+    if (fineAmount > 0 && !finePaidCheckbox.checked) {
+        showError("You must confirm the fine payment before proceeding.");
+        return;
+    }
+
+    // Here you would typically make a call to your backend to process the payment
+    console.log(`Paying fine of: ${fineAmount}`);
+    
+    // Provide feedback to user
+    if (fineAmount > 0) {
+        alert(`Fine of ${fineAmount} has been paid successfully. Thank you!`);
+    } else {
+        alert("No outstanding fines. Thank you!");
+    }
+
+    // Clear the form if needed or redirect
+    document.getElementById('fine-payment-form').reset();
+}
+
+// Adding event listeners to buttons
+document.getElementById('issue-button').addEventListener('click', issueBook);
+document.getElementById('return-button').addEventListener('click', returnBook);
+document.getElementById('pay-fine-button').addEventListener('click', payFine);
+
+</script>
+</body>
+</html>

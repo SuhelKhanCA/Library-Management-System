@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pay Fine</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css"> <!-- Your custom CSS file -->
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Library Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('check_availability') }}">Check Book Availability</a>
+                        </li>
+                        {% if current_user.is_admin() %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('add_book') }}">Add Book</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('manage_books') }}">Manage Books</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('add_membership') }}">Add Membership</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('manage_memberships') }}">Manage Memberships</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('issue_book') }}">Issue Book</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('return_book') }}">Return Book</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1>Pay Fine</h1>
+
+        <section class="mb-4">
+            <h2>Is Book Available?</h2>
+            <form id="payFineForm">
+                <div class="form-group">
+                    <label for="bookName">Enter Book Name:</label>
+                    <input type="text" class="form-control" id="bookName" name="bookName" required>
+                </div>
+                <div class="form-group">
+                    <label for="authorName">Enter Author:</label>
+                    <input type="text" class="form-control" id="authorName" name="authorName" required>
+                </div>
+                <div class="form-group">
+                    <label for="serialNo">Serial No:</label>
+                    <input type="text" class="form-control" id="serialNo" name="serialNo" required>
+                </div>
+                <div class="form-group">
+                    <label for="issueDate">Issue Date:</label>
+                    <input type="date" class="form-control" id="issueDate" name="issueDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="returnDate">Return Date:</label>
+                    <input type="date" class="form-control" id="returnDate" name="returnDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="actualReturnDate">Actual Return Date:</label>
+                    <input type="date" class="form-control" id="actualReturnDate" name="actualReturnDate">
+                </div>
+                <div class="form-group">
+                    <label for="fineCalculated">Fine Calculated:</label>
+                    <input type="text" class="form-control" id="fineCalculated" name="fineCalculated" value="0" readonly>
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="finePaid" name="finePaid">
+                    <label class="form-check-label" for="finePaid">Fine Paid</label>
+                </div>
+                <div class="form-group">
+                    <label for="remarks">Remarks (Optional):</label>
+                    <textarea class="form-control" id="remarks" name="remarks" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Confirm Payment</button>
+            </form>
+        </section>
+
+        <footer class="mt-4">
+            <p class="text-muted">Note: If logged in as Admin, "Home" will take you to the Admin Home Page. If logged in as user, "Home" will take you to the User Home Page.</p>
+        </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="script.js"></script> <!-- Your JavaScript file -->
+</body>
+</html>
