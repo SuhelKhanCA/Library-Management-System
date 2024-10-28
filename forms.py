@@ -1,12 +1,33 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, BooleanField, DateField, RadioField, TextAreaField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError, Optional, NumberRange
+from datetime import datetime, timedelta  # Add this line
 from models import User, Book
+
+class AdminRegisterForm(FlaskForm):
+    username = StringField('Username', 
+                           validators=[DataRequired(), Length(min=4, max=150)])
+    password = PasswordField('Password', 
+                             validators=[DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', 
+                                      validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Register')
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user:
+            raise ValidationError('That username is already taken. Please choose a different one.')
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=50)])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
+
+class RegisterForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=4, max=25)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Register')
 
 
 class MembershipForm(FlaskForm):
