@@ -17,3 +17,6 @@
 
 ## User Dashboard
 ![alt text](image-3.png)
+
+## Admin Registration
+![image](https://github.com/user-attachments/assets/cd17e908-4cde-47d2-9f58-b14f7bfe0bbc)
